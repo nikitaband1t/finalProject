@@ -1,5 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
 project(boostFinal)
-
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lboost_system -lboost_thread")
 set(SOURCE_FILES main.cpp)
 find_package( Boost COMPONENTS system REQUIRED )
