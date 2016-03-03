@@ -1,7 +1,7 @@
 #include <iostream>
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
-
+#include <boost/thread.hpp>
 static const char *found = "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n";
 static const char *not_found = "HTTP/1.0 404 NOT FOUND\r\nContent-Type: text/html\r\n\r\n";
 using boost::asio::ip::tcp;
@@ -89,28 +89,35 @@ public:
         }
     }
 };
-
+static void getstart(boost::asio::io_service*service){
+    service->run();
+}
 class ioService {
-    boost::asio::io_service *io_service;
+    boost::asio::io_service *io_service_;
+    boost::thread_group*threads;
 public:
     ioService() {
-        io_service = new boost::asio::io_service();
+        io_service_ = new boost::asio::io_service();
+        threads = new boost::thread_group();
     }
 
     void serverMake(int port, std::string address) {
-        server serv(*io_service, port, address);
-        io_service->run();
+        server serv(*io_service_, port, address);
+      for(int i=0;i<5;i++) {
+          threads->create_thread(boost::bind(getstart,io_service_));
+      }
+        threads->join_all();
+    }
+    boost::asio::io_service*getIO(){
+        return io_service_;
     }
 
-private:
-    void run_service() {
-        io_service->run();
-    }
 };
 
+
 int main(int argc, char **argv) {
-    ioService io_service;
     std::string address, port;
+    ioService io_service;
     int i = 0;
     while ((getopt(argc, argv, "h:p:d:") != -1)) {
         i++;
@@ -135,4 +142,5 @@ int main(int argc, char **argv) {
     close(STDOUT_FILENO);
     close(STDERR_FILENO);
     io_service.serverMake(atoi(port.c_str()), address);
+    return 0;
 }
