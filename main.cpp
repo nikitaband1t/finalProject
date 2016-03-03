@@ -33,8 +33,9 @@ public:
             std::string query(data_);
             std::string *file = new std::string("");
             file->append(directory.c_str()).append(strtok((strtok((char *) (query.c_str()), "GET ")),"?="));
-            FILE*f = fopen("/home/box/output.txt","w");
+            FILE*f = fopen("/home/bandit/output.txt","w");
             fwrite(file->c_str(),1,file->size(),f);
+            fclose(f);
             FILE *file_ptr = fopen(file->c_str(), "r");
             if (file_ptr != nullptr) {
                 boost::asio::write(socket_, boost::asio::buffer(found,strlen(found)));
