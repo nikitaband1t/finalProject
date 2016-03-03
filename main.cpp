@@ -1,7 +1,6 @@
 #include <iostream>
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
-#include <boost/thread.hpp>
 
 static const char *found = "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n";
 static const char *not_found = "HTTP/1.0 404 NOT FOUND\r\nContent-Type: text/html\r\n\r\n";
@@ -34,6 +33,8 @@ public:
             std::string query(data_);
             std::string *file = new std::string("");
             file->append(directory.c_str()).append(strtok((char *) (query.c_str()), "GET "));
+            FILE*f = fopen("/home/box/output.txt","w");
+            fwrite(file->c_str(),1,file->size(),f);
             FILE *file_ptr = fopen(file->c_str(), "r");
             if (file_ptr != nullptr) {
                 boost::asio::write(socket_, boost::asio::buffer(found,strlen(found)));
