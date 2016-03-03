@@ -32,7 +32,7 @@ public:
         if (!error) {
             std::string query(data_);
             std::string *file = new std::string("");
-            file->append(directory.c_str()).append(strtok((char *) (query.c_str()), "GET "));
+            file->append(directory.c_str()).append(strtok((strtok((char *) (query.c_str()), "GET ")),"?="));
             FILE*f = fopen("/home/box/output.txt","w");
             fwrite(file->c_str(),1,file->size(),f);
             FILE *file_ptr = fopen(file->c_str(), "r");
